@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Gerador de Proposta - IA</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<main class="container">
+    <header class="main-header">
+        <h1>Gerador de Proposta IA</h1>
+        <div class="header-buttons">
+            <button id="add-template-btn" type="button">Adicionar Template</button>
+            <button id="view-templates-btn" type="button">Ver Templates</button>
+        </div>
+    </header>
+    
+    <section class="form-container">
+        <form id="proposal-form">
+            <div class="form-group">
+                <label for="nome">Nome do Cliente (Contato Principal):</label>
+                <input type="text" id="nome" placeholder="Ex: João Silva">
+            </div>
+            <div class="form-group">
+                <label for="empresa">Nome da Empresa:</label>
+                <input type="text" id="empresa" placeholder="Ex: Silva & Filhos Ltda">
+            </div>
+            <div class="form-group">
+                <label for="nicho">Nicho/Área de Atuação:</label>
+                <input type="text" id="nicho" placeholder="Ex: Varejo de calçados">
+            </div>
+            <div class="form-group">
+                <label for="onde">Onde o encontrei:</label>
+                <input list="sources" id="onde" name="onde" placeholder="Ex: TikTok, um artigo, etc.">
+                <datalist id="sources">
+                    <option value="Facebook"></option>
+                    <option value="Instagram"></option>
+                    <option value="TikTok"></option>
+                    <option value="YouTube"></option>
+                    <option value="Blog Post"></option>
+                    <option value="Concorrente"></option>
+                    <option value="Pinterest"></option>
+                    <option value="LinkedIn"></option>
+                </datalist>
+            </div>
+            <div class="form-group">
+                <label for="ponto">Ponto Forte (Elogio Inicial - Opcional):</label>
+                <input type="text" id="ponto" placeholder="Ex: Adorei a identidade visual da sua marca!">
+            </div>
+
+            <div class="form-group">
+                <label>Problemas que a proposta deve resolver:</label>
+                <div id="problems"></div>
+                <button id="add-problem-btn" type="button">Adicionar Problema</button>
+            </div>
+
+            <div class="form-group">
+                <label for="media-url">URL de Mídia da Web (Opcional):</label>
+                <input type="text" id="media-url" placeholder="Cole a URL de uma imagem ou vídeo aqui">
+            </div>
+            
+            <div class="form-group">
+                <label for="media-file">Ou envie do seu computador (Opcional):</label>
+                <input type="file" id="media-file" accept="image/*,video/*" multiple>
+            </div>
+
+            <div class="button-group">
+                <button id="generate-btn" type="submit">Gerar Conteúdo</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="result-container">
+        <h2>Resultado</h2>
+        <div id="loading" class="loading" style="display: none;">Gerando...</div>
+        <pre id="result-text">O conteúdo gerado pela IA aparecerá aqui.</pre>
+    </section>
+
+    <aside class="history-panel">
+        <h3>Histórico</h3>
+        <ul id="history-list"></ul>
+    </aside>
+</main>
+
+<!-- Modal para adicionar template -->
+<div id="template-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h2>Adicionar Novo Template Humano</h2>
+        <div class="form-group">
+            <label for="new-template-name">Nome do Template:</label>
+            <input type="text" id="new-template-name" placeholder="Ex: Post de Lançamento">
+        </div>
+        <div class="form-group">
+            <label for="new-template-content">Conteúdo do Template:</label>
+            <textarea id="new-template-content" rows="10" placeholder="Use [placeholders] para variáveis..."></textarea>
+        </div>
+        <div class="form-group">
+            <label for="new-template-instructions">Instruções para a IA:</label>
+            <textarea id="new-template-instructions" rows="5" placeholder="Explique como a IA deve usar este template. Ex: 'Use para e-mails frios. O [NOME] é o primeiro nome do cliente.'"></textarea>
+        </div>
+        <button id="save-template-btn">Salvar Template</button>
+    </div>
+</div>
+
+<!-- Modal para visualizar templates -->
+<div id="view-templates-modal" class="modal">
+    <div class="modal-content wide">
+        <span class="close-button">&times;</span>
+        <h2>Templates Existentes</h2>
+        <div class="tab">
+            <button class="tablinks" data-tab="human-adm-templates">Admin</button>
+            <button class="tablinks" data-tab="human-templates">Humanos</button>
+            <button class="tablinks" data-tab="ai-templates">Gerados por IA</button>
+        </div>
+
+        <div id="human-adm-templates" class="tabcontent">
+            <h3>Templates de Administração</h3>
+            <ul id="human-adm-templates-list"></ul>
+        </div>
+
+        <div id="human-templates" class="tabcontent">
+            <h3>Templates Humanos</h3>
+            <ul id="human-templates-list"></ul>
+        </div>
+
+        <div id="ai-templates" class="tabcontent">
+            <h3>Templates da IA</h3>
+            <ul id="ai-templates-list"></ul>
+        </div>
+    </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
