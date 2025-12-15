@@ -72,9 +72,9 @@
     </section>
 
     <section class="result-container">
-        <h2>Resultado</h2>
+        <h2>Relatório e Visualização</h2>
         <div id="loading" class="loading" style="display: none;">Gerando...</div>
-        <pre id="result-text">O conteúdo gerado pela IA aparecerá aqui.</pre>
+        <pre id="result-text">O conteúdo gerado pela IA ou o template selecionado aparecerá aqui.</pre>
     </section>
 
     <aside class="history-panel">
@@ -89,8 +89,8 @@
         <span class="close-button">&times;</span>
         <h2>Adicionar Novo Template Humano</h2>
         <div class="form-group">
-            <label for="new-template-name">Nome do Template:</label>
-            <input type="text" id="new-template-name" placeholder="Ex: Post de Lançamento">
+            <label for="new-template-name">Nome do Template (será o nome do arquivo .json):</label>
+            <input type="text" id="new-template-name" placeholder="Ex: Post_de_Lancamento">
         </div>
         <div class="form-group">
             <label for="new-template-content">Conteúdo do Template:</label>
@@ -110,12 +110,12 @@
         <span class="close-button">&times;</span>
         <h2>Templates Existentes</h2>
         <div class="tab">
-            <button class="tablinks" data-tab="human-adm-templates">Admin</button>
+            <button class="tablinks active" data-tab="human-adm-templates">Admin</button>
             <button class="tablinks" data-tab="human-templates">Humanos</button>
             <button class="tablinks" data-tab="ai-templates">Gerados por IA</button>
         </div>
 
-        <div id="human-adm-templates" class="tabcontent">
+        <div id="human-adm-templates" class="tabcontent active">
             <h3>Templates de Administração</h3>
             <ul id="human-adm-templates-list"></ul>
         </div>

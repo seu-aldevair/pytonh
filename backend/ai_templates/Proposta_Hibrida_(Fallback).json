@@ -1,0 +1,6 @@
+{
+    "title": "Proposta Híbrida (Fallback)",
+    "subject": "Uma proposta para você",
+    "body": "[Proposta Mock] Conteúdo gerado com base no prompt e no template.",
+    "ideal_for": "Situações onde a IA falhou em gerar um JSON."
+}

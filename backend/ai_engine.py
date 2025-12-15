@@ -19,10 +19,10 @@ class AIEngine:
         Modelos de Inspiração:
         """
         for i, template in enumerate(inspiration_templates):
-            prompt += f"\n--- Modelo de Inspiração {i+1} ---\n"
-            prompt += f"Título: {template['title']}\n"
-            prompt += f"Assunto: {template['subject']}\n"
-            prompt += f"Corpo: {template['body']}\n"
+            prompt += f"\\n--- Modelo de Inspiração {i+1} ---\\n"
+            prompt += f"Título: {template.get('title', 'N/A')}\\n"
+            prompt += f"Assunto: {template.get('subject', 'N/A')}\\n"
+            prompt += f"Corpo: {template.get('body', 'N/A')}\\n"
 
         prompt += """
         ---
@@ -58,7 +58,7 @@ class AIEngine:
         Modelos de Inspiração Usados:
         """
         for template in inspiration_templates:
-            prompt += f"- {template['title']}\n"
+            prompt += f"- {template.get('title', 'N/A')}\\n"
 
         prompt += f"""
         Novo Template Gerado:
@@ -70,13 +70,12 @@ class AIEngine:
         """
         return self.gemini_client.generate_content(prompt)
 
-    def generate_proposal(self, context: str, media_files: list = None) -> dict:
+    def generate_proposal(self, context: str) -> dict:
         """
         Gera uma proposta inteligente, possivelmente combinando templates existentes.
         """
         all_templates = self._load_all_templates()
         
-        # Junta todos os templates disponíveis para a seleção
         human_adm_templates = all_templates.get("human_adm", [])
         human_templates = all_templates.get("human", [])
         ai_templates = all_templates.get("ai", [])
@@ -89,19 +88,15 @@ class AIEngine:
                 "report": "Não há templates no sistema. Adicione alguns para começar."
             }
 
-        # A IA seleciona 2 ou 3 templates relevantes como inspiração
         num_to_select = min(len(selectable_templates), random.randint(2, 3))
         inspiration_templates = random.sample(selectable_templates, num_to_select)
 
-        # Cria um novo template híbrido
         new_template = self._create_hybrid_template(context, inspiration_templates)
 
-        # Salva o novo template gerado pela IA
         if new_template:
             template_name = template_manager.save_ai_template(new_template)
             template_manager.increment_template_usage(template_name)
 
-        # Gera um relatório explicando o processo
         report = self._generate_creation_report(context, inspiration_templates, new_template)
 
         return {

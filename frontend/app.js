@@ -29,8 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         problemsContainer.appendChild(newProblemDiv);
 
-        newProblemDiv.querySelector('.remove-problem-btn').addEventListener('click', () => {
-            newProblemDiv.remove();
+        newProblemDiv.querySelector('.remove-problem-btn').addEventListener('click', (e) => {
+            e.target.closest('.problem-item').remove();
         });
     });
 
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     proposalForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         loading.style.display = 'block';
-        resultText.textContent = 'O conteúdo gerado pela IA aparecerá aqui.';
+        resultText.textContent = '';
         
         const formData = new FormData();
         
@@ -53,12 +53,13 @@ document.addEventListener('DOMContentLoaded', () => {
                               .filter(value => value);
         formData.append('problems', JSON.stringify(problems));
 
-        if (mediaUrlInput.value) {
-            formData.append('media_url', mediaUrlInput.value);
-        }
-        for (const file of mediaFileInput.files) {
-            formData.append('media_files', file);
-        }
+        // Temporarily disable media uploads to fix core issue
+        // if (mediaUrlInput.value) {
+        //     formData.append('media_url', mediaUrlInput.value);
+        // }
+        // for (const file of mediaFileInput.files) {
+        //     formData.append('media_files', file);
+        // }
 
         try {
             const response = await fetch('/generate-proposal', {
@@ -130,6 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
             (templates.human_adm || []).forEach(t => lists['human-adm'].appendChild(createTemplateItem(t)));
             (templates.human || []).forEach(t => lists['human'].appendChild(createTemplateItem(t)));
             (templates.ai || []).forEach(t => lists['ai'].appendChild(createTemplateItem(t)));
+            
+            // Ativa a primeira aba por padrão após carregar
+            const firstTab = document.querySelector('#view-templates-modal .tablinks');
+            if (firstTab) {
+                openTab(firstTab.dataset.tab);
+            }
 
         } catch (error) {
             console.error(error);
@@ -138,25 +145,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createTemplateItem(template) {
         const li = document.createElement('li');
-        li.textContent = template.name || template.titulo;
+        // O nome do template é o nome do arquivo .json
+        li.textContent = template.name || 'Template sem nome';
         li.addEventListener('click', () => {
-            // Preenche o campo de problemas, que é mais flexível
-            const problemInput = document.querySelector('.problem-item input:last-of-type') || addProblemAndGetInput();
-            problemInput.value = template.content;
+            // Abre o relatório do template em uma nova aba
+            window.open(`/templates/report/${template.filename}`, '_blank');
             closeModal(viewTemplatesModal);
         });
         return li;
     }
 
-    function addProblemAndGetInput() {
-        addProblemBtn.click();
-        return document.querySelector('.problem-item input:last-of-type');
-    }
-
     // --- Lógica de Histórico ---
     function addToHistory(text) {
         const li = document.createElement('li');
-        const preview = text.length > 60 ? text.substring(0, 60) + '...' : text;
+        const preview = text.length > 80 ? text.substring(0, 80) + '...' : text;
         li.textContent = preview;
         li.dataset.fullText = text;
         
@@ -187,22 +189,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // --- Lógica de Abas ---
-    const tabs = document.querySelectorAll('.tablinks');
-    const tabContents = document.querySelectorAll('.tabcontent');
+    const tabContainer = document.querySelector('#view-templates-modal .tab');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
+    function openTab(tabId) {
+        const tabContents = document.querySelectorAll('#view-templates-modal .tabcontent');
+        const tabs = document.querySelectorAll('#view-templates-modal .tablinks');
 
-            tabContents.forEach(content => content.classList.remove('active'));
-            const activeContent = document.getElementById(tab.dataset.tab);
-            if(activeContent) activeContent.classList.add('active');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        document.querySelector(`[data-tab='${tabId}']`).classList.add('active');
+
+        tabContents.forEach(content => content.classList.remove('active'));
+        const activeContent = document.getElementById(tabId);
+        if (activeContent) {
+            activeContent.classList.add('active');
+        }
+    }
+
+    if (tabContainer) {
+        tabContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('tablinks')) {
+                const tabId = e.target.dataset.tab;
+                openTab(tabId);
+            }
         });
-    });
-
-    // Ativa a primeira aba por padrão
-    if(tabs.length > 0) {
-        tabs[0].click();
     }
 });
